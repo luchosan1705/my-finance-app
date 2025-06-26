@@ -3,12 +3,12 @@
 /* Base Styles */
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif; /* Usar Inter u otra fuente sans-serif */
-    background-color: #1a202c; /* bg-slate-900 */
-    color: #cbd5e0; /* text-slate-300 */
+    font-family: 'Inter', sans-serif;
+    background-color: #1a202c;
+    color: #cbd5e0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.5; /* Mejor legibilidad */
+    line-height: 1.5;
 }
 
 code {
@@ -18,23 +18,23 @@ code {
 /* General Layout */
 .app-container {
     min-height: 100vh;
-    background-color: #1a202c; /* bg-slate-900 */
-    color: #e2e8f0; /* text-white */
-    padding: 0.8rem; /* Padding general más reducido */
+    background-color: #1a202c;
+    color: #e2e8f0;
+    padding: 0.8rem;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to top */
+    align-items: flex-start;
 }
 
-@media (min-width: 640px) { /* sm breakpoint */
+@media (min-width: 640px) {
     .app-container {
         padding: 1rem;
     }
 }
 
-@media (min-width: 1024px) { /* lg breakpoint */
+@media (min-width: 1024px) {
     .app-container {
-        padding: 1.5rem; /* Padding reducido para pantallas grandes */
+        padding: 1.5rem;
     }
 }
 
@@ -45,19 +45,19 @@ code {
     margin-right: auto;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Espacio entre secciones principales reducido */
+    gap: 1.5rem;
 }
 
 /* Header */
 .app-header {
-    margin-bottom: 1.5rem; /* Margen inferior ajustado */
+    margin-bottom: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.6rem 1.25rem; /* Padding horizontal y vertical reducido para hacerlo más fino */
+    padding: 0.6rem 1.25rem;
     border-radius: 0.75rem;
     background-color: #1e293b;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     position: relative;
     overflow: hidden;
 }
@@ -87,7 +87,7 @@ code {
 }
 
 .app-title {
-    font-size: 1.6rem; /* Tamaño de fuente aún más reducido para un header más fino */
+    font-size: 1.6rem;
     font-weight: 800;
     text-align: left;
     background-image: linear-gradient(to right, #60a5fa, #34d399);
@@ -98,7 +98,7 @@ code {
     letter-spacing: -0.01em;
 }
 
-.app-subtitle { /* Se mantiene oculto, como se solicitó antes */
+.app-subtitle {
     display: none;
 }
 
@@ -106,7 +106,7 @@ code {
 .user-info-and-logout {
     display: flex;
     align-items: center;
-    gap: 0.6rem; /* Espacio reducido */
+    gap: 0.6rem;
     flex-shrink: 0;
 }
 
@@ -150,6 +150,12 @@ code {
     width: 1rem;
 }
 
+/* Chat Button (Nuevo en la navegación) */
+/* Este botón ya no es parte de la navegación principal si el chat es permanente */
+/* Si se mantiene, su estilo debe ser similar a add-transaction-nav-button */
+.chat-nav-button {
+    display: none; /* Ocultar si el chat es permanente en el dashboard */
+}
 
 /* Logout Button */
 .logout-button {
@@ -232,47 +238,33 @@ code {
 }
 
 
-/* Main Grid Layout */
+/* Main Grid Layout (Contenedor principal de contenido) */
 .main-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Una sola columna para todo el contenido principal */
     gap: 1.5rem;
 }
 
 @media (min-width: 1024px) {
     .main-grid {
-        gap: 1.8rem;
+        grid-template-columns: 1fr; /* Mantiene una sola columna en desktop para que todo ocupe el 100% */
     }
 }
 
-.main-col-left {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.main-col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* New: Grid for Balances and Exchange Rate */
-.dashboard-bottom-grid {
+/* New: Grid for Balances, Chat and Exchange Rate */
+.dashboard-secondary-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Una columna en móvil */
     gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: stretch; /* Asegura que los elementos en la cuadrícula estiren a la misma altura */
 }
 
+/* Forzar 3 columnas a partir de tablet */
 @media (min-width: 768px) {
-    .dashboard-bottom-grid {
-        grid-template-columns: 2fr 1fr;
+    .dashboard-secondary-grid {
+        grid-template-columns: 2fr 1.5fr 1fr; /* Saldos (2fr), Chat (1.5fr), Tipo de Cambio (1fr) */
         gap: 1.5rem;
-    }
-}
-@media (min-width: 1024px) {
-    .dashboard-bottom-grid {
-        grid-template-columns: 3fr 1fr;
     }
 }
 
@@ -282,6 +274,10 @@ code {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-list-grid {
     margin-bottom: 1.5rem;
 }
 
@@ -359,14 +355,18 @@ code {
 .icon-sky { color: #38bdf8; height: 1.1rem; width: 1.1rem; }
 
 
-/* Section Header (Saldos por Ubicación) */
-.section-container {
-    margin-bottom: 0; /* Eliminado el margen inferior si está en dashboard-bottom-grid */
+/* Section Container (general, used for Location Balances & Chatbot & Exchange Rate) */
+.section-container { /* Esta clase se usa para Saldos por Ubicación */
+    margin-bottom: 0; 
     background-color: #1e293b;
     padding: 1.2rem;
     border-radius: 0.6rem;
     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    flex-grow: 1; /* Permite que crezca en la cuadrícula */
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* ¡Importante para estirar en la cuadrícula! */
+    box-sizing: border-box;
 }
 
 .section-header {
@@ -411,6 +411,7 @@ code {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 0.8rem;
+    flex-grow: 1;
 }
 
 @media (min-width: 768px) {
@@ -463,6 +464,130 @@ code {
     color: #94a3b8;
     padding: 0.6rem 0;
 }
+
+/* Chatbot Direct Container (para cuando el chatbot está siempre visible) */
+.chatbot-direct-container {
+    background-color: #1e293b;
+    padding: 1.2rem;
+    border-radius: 0.6rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    min-height: 250px; /* Asegura una altura mínima */
+    flex-grow: 1;
+    overflow: hidden;
+    height: 100%; /* <-- ¡Importante para estirar en la cuadrícula! */
+    box-sizing: border-box;
+}
+
+
+.chatbot-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chatbot-icon {
+    width: 1.2em;
+    height: 1.2em;
+    color: #60a5fa;
+}
+
+.chat-messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chat-message {
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.75rem;
+    max-width: 80%;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.user-message {
+    background-color: #3b82f6;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.ai-message {
+    background-color: #475569;
+    color: #e2e8f0;
+    align-self: flex-start;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.chat-loading {
+    font-style: italic;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.chat-input-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: auto;
+}
+
+.chat-input {
+    flex-grow: 1;
+    background-color: #334155;
+    color: white;
+    border-radius: 0.375rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #475569;
+    outline: none;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.chat-send-button {
+    background-color: #34d399;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.chat-send-button:hover {
+    background-color: #28b880;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+}
+
+.chat-send-button:active {
+    transform: translateY(0);
+}
+
+.chat-send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 /* Transaction List */
 .transaction-list-container {
@@ -630,7 +755,6 @@ code {
     background: none;
     border: none;
     cursor: pointer;
-    color: #94a3b8;
     padding: 0.3rem;
     border-radius: 50%;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -689,7 +813,9 @@ code {
     padding: 0.8rem 1rem;
     border-radius: 0.5rem;
     transition: background-color 0.2s ease, transform 0.2s ease;
+    border: 1px solid transparent;
 }
+
 .debt-list-item:hover {
     background-color: #475569;
     transform: translateY(-2px);
@@ -755,6 +881,11 @@ code {
     padding: 1.5rem;
     border-radius: 0.75rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que el contenedor estire a la altura de la celda */
+    box-sizing: border-box;
+    flex-grow: 1;
 }
 
 .exchange-rate-header {
@@ -1060,12 +1191,6 @@ code {
     font-weight: bold;
     color: white;
     margin-bottom: 1.25rem;
-}
-
-.transaction-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
 .form-toggle-group {

@@ -17,6 +17,7 @@ import EditTransactionModal from './EditTransactionModal';
 import ConfirmModal from './ConfirmModal';
 import ConfirmSubmitModal from './ConfirmSubmitModal'; 
 import TransactionForm from './TransactionForm'; 
+import Chatbot from './Chatbot';
 
 // Iconos
 import { ArrowDownCircle, ArrowUpCircle, CheckCircle2, Wallet, Settings, LogOut, Landmark, PlusCircle } from '../utils/icons';
@@ -168,7 +169,7 @@ const Dashboard = ({ user }) => {
                             <BalanceStatCard title="Dinero Restante" arsValue={calculations.remainingBalanceARS} usdValue={calculations.remainingBalanceUSD} icon={<Wallet className="icon-emerald" />} />
                         </section>
                         {/* Nuevo contenedor para Saldos por Ubicación y Tipo de Cambio */}
-                        <div className="dashboard-bottom-grid">
+                        <div className="dashboard-secondary-grid">
                             <section className="section-container">
                                 <div className="section-header">
                                     <h2 className="section-title">Saldos por Ubicación</h2>
@@ -188,8 +189,42 @@ const Dashboard = ({ user }) => {
                                     )) : <p className="text-center-full">No hay saldos para mostrar. Agrega y gestiona ubicaciones para empezar.</p> }
                                 </div>
                             </section>
-                            {/* Sección Tipo de Cambio ahora se renderiza aquí */}
+                            <Chatbot /> 
                             <ExchangeRateInfo /> 
+                        </div>
+                        <div class="dashboard-list-grid">
+                        <TransactionList 
+                            title="Gastos Pendientes" 
+                            items={calculations.unpaidExpenses} 
+                            listType="expense" 
+                            openEditModal={handleOpenEditModal} 
+                            openConfirmModal={handleOpenConfirmModal} 
+                        />
+                        </div>
+                        <div class="dashboard-list-grid">
+                        <DebtList 
+                            debts={calculations.debtList} 
+                            openPayDebtModal={handleOpenPayDebtModal} 
+                            openConfirmModal={handleOpenConfirmModal} 
+                        />
+                        </div>
+                        <div class="dashboard-list-grid">
+                        <TransactionList 
+                            title="Historial de Gastos Pagados" 
+                            items={calculations.paidExpensesList} 
+                            listType="expense" 
+                            openEditModal={handleOpenEditModal} 
+                            openConfirmModal={handleOpenConfirmModal} 
+                        />
+                        </div>
+                        <div class="dashboard-list-grid">
+                        <TransactionList 
+                            title="Historial de Ingresos" 
+                            items={incomes} 
+                            listType="income" 
+                            openEditModal={handleOpenEditModal} 
+                            openConfirmModal={handleOpenConfirmModal} 
+                        />
                         </div>
                     </>
                 );
