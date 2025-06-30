@@ -1,4 +1,3 @@
-// src/components/Dashboard.jsx
 import React, { useState, useMemo, useContext, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import { signOut } from 'firebase/auth';
@@ -17,10 +16,10 @@ import EditTransactionModal from './EditTransactionModal';
 import ConfirmModal from './ConfirmModal';
 import ConfirmSubmitModal from './ConfirmSubmitModal'; 
 import TransactionForm from './TransactionForm'; 
-import Chatbot from './Chatbot';
+import Chatbot from './Chatbot'; // Importar el componente Chatbot
 
 // Iconos
-import { ArrowDownCircle, ArrowUpCircle, CheckCircle2, Wallet, Settings, LogOut, Landmark, PlusCircle } from '../utils/icons';
+import { ArrowDownCircle, ArrowUpCircle, CheckCircle2, Wallet, Settings, LogOut, Landmark, PlusCircle, MessageCircle } from '../utils/icons';
 
 const Dashboard = ({ user }) => {
     // Destructurar todo lo necesario del contexto aquí, al principio del componente
@@ -168,7 +167,7 @@ const Dashboard = ({ user }) => {
                             <StatCard title="Gastos Pagados" value={calculations.paidExpenses} icon={<CheckCircle2 className="icon-blue" />} />
                             <BalanceStatCard title="Dinero Restante" arsValue={calculations.remainingBalanceARS} usdValue={calculations.remainingBalanceUSD} icon={<Wallet className="icon-emerald" />} />
                         </section>
-                        {/* Nuevo contenedor para Saldos por Ubicación y Tipo de Cambio */}
+                        {/* Nuevo contenedor para Saldos por Ubicación, Chat y Tipo de Cambio */}
                         <div className="dashboard-secondary-grid">
                             <section className="section-container">
                                 <div className="section-header">
@@ -184,15 +183,19 @@ const Dashboard = ({ user }) => {
                                                 <Landmark className="icon-sky" />
                                                 <p className="location-name">{location}</p>
                                             </div>
-                                            <p className="location-balance-value">ARS {balance.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                            {/* Corregido: Acceder a totalARS y totalUSD del objeto balance */}
+                                            <p className="location-balance-value">ARS {balance.totalARS.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                            <p className="location-balance-value-secondary">USD {balance.totalUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                         </div> 
                                     )) : <p className="text-center-full">No hay saldos para mostrar. Agrega y gestiona ubicaciones para empezar.</p> }
                                 </div>
                             </section>
+                            {/* Sección del Chatbot ahora se renderiza directamente aquí */}
                             <Chatbot /> 
+                            {/* Sección Tipo de Cambio ahora se renderiza aquí */}
                             <ExchangeRateInfo /> 
                         </div>
-                        <div class="dashboard-list-grid">
+                        {/* Las listas de transacciones se renderizan fuera de dashboard-secondary-grid para ocupar todo el ancho */}
                         <TransactionList 
                             title="Gastos Pendientes" 
                             items={calculations.unpaidExpenses} 
@@ -200,15 +203,11 @@ const Dashboard = ({ user }) => {
                             openEditModal={handleOpenEditModal} 
                             openConfirmModal={handleOpenConfirmModal} 
                         />
-                        </div>
-                        <div class="dashboard-list-grid">
                         <DebtList 
                             debts={calculations.debtList} 
                             openPayDebtModal={handleOpenPayDebtModal} 
                             openConfirmModal={handleOpenConfirmModal} 
                         />
-                        </div>
-                        <div class="dashboard-list-grid">
                         <TransactionList 
                             title="Historial de Gastos Pagados" 
                             items={calculations.paidExpensesList} 
@@ -216,8 +215,6 @@ const Dashboard = ({ user }) => {
                             openEditModal={handleOpenEditModal} 
                             openConfirmModal={handleOpenConfirmModal} 
                         />
-                        </div>
-                        <div class="dashboard-list-grid">
                         <TransactionList 
                             title="Historial de Ingresos" 
                             items={incomes} 
@@ -225,7 +222,6 @@ const Dashboard = ({ user }) => {
                             openEditModal={handleOpenEditModal} 
                             openConfirmModal={handleOpenConfirmModal} 
                         />
-                        </div>
                     </>
                 );
             case 'pending_expenses':
@@ -281,7 +277,7 @@ const Dashboard = ({ user }) => {
                 
                 {/* Menú de Navegación */}
                 <nav className="main-nav">
-                    <div className="nav-buttons-left">
+                    <div className="nav-buttons-left"> 
                         <button onClick={() => setSelectedTab('dashboard')} className={`nav-button ${selectedTab === 'dashboard' ? 'nav-button-active' : ''}`}>Panel</button>
                         <button onClick={() => setSelectedTab('pending_expenses')} className={`nav-button ${selectedTab === 'pending_expenses' ? 'nav-button-active' : ''}`}>Gastos Pendientes</button>
                         <button onClick={() => setSelectedTab('debts')} className={`nav-button ${selectedTab === 'debts' ? 'nav-button-active' : ''}`}>Deudas</button>
@@ -295,9 +291,7 @@ const Dashboard = ({ user }) => {
                 </nav>
 
                 <main className="main-grid">
-                    <div className="main-col-left"> 
-                        {renderMainContent()}
-                    </div>
+                    {renderMainContent()}
                 </main>
                 <ManageLocationsModal isOpen={isLocationsModalOpen} onClose={() => setIsLocationsModalOpen(false)} />
                 <PayDebtModal isOpen={isPayDebtModalOpen} onClose={handleClosePayDebtModal} debt={currentDebt} />

@@ -66,7 +66,7 @@ export const AppProvider = ({ children }) => {
         };
     }, [userId, db]);
 
-    // --- Funciones que interactúan con Firebase (Declaradas antes de useMemo) ---
+    // --- Funciones que interactúan con Firebase (sin cambios) ---
     const addIncome = async (income) => {
         if (!userId) { console.warn("addIncome: No hay userId disponible."); return; }
         try {
@@ -214,7 +214,7 @@ export const AppProvider = ({ children }) => {
                 const updateField = payCurrency === 'ARS' ? 'totalARS' : 'totalUSD';
                 const currentAmount = debtDoc.data()[updateField] || 0;
                 let newAmount = currentAmount - payAmount;
-                if(newAmount < 0) newAmount = 0;
+                if(newAmount < 0) newAmount = 0; // Evita saldos negativos
 
                 transaction.update(debtRef, { [updateField]: newAmount });
                 
@@ -243,7 +243,7 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    // Cálculos de la aplicación (se computan aquí y se pasan al contexto)
+    // Cálculos de la aplicación
     const calculations = useMemo(() => {
         console.log("Calculations useMemo: Recalculando...");
         console.log("Deps for calculations: incomes.length:", incomes.length, "expenses.length:", expenses.length, "debts.length:", debts.length, "exchangeRate:", exchangeRate, "incomeLocations.length:", incomeLocations.length);
@@ -259,6 +259,7 @@ export const AppProvider = ({ children }) => {
         }
 
         const convertToArs = (amount, currency) => currency === 'USD' ? amount * exchangeRate : amount;
+        const convertToUsd = (amount, currency) => currency === 'ARS' && exchangeRate > 0 ? amount / exchangeRate : amount;
         
         const totalIncome = incomes.reduce((sum, income) => sum + convertToArs(income.amount, income.currency), 0);
         const totalExpenses = expenses.reduce((sum, expense) => sum + convertToArs(expense.amount, expense.currency), 0);
@@ -270,9 +271,34 @@ export const AppProvider = ({ children }) => {
         
         const paidExpensesList = expenses.filter(e => e.isPaid);
         
-        const balancesByLocation = incomeLocations.reduce((acc, loc) => { acc[loc.name] = 0; return acc; }, {});
-        incomes.forEach(income => { const location = income.location || 'Sin Ubicación'; if (balancesByLocation[location] !== undefined) { balancesByLocation[location] += convertToArs(income.amount, income.currency); } });
-        expenses.forEach(expense => { if(expense.isPaid && expense.source) { const source = expense.source; if(balancesByLocation[source] !== undefined) { balancesByLocation[source] -= convertToArs(expense.amount, expense.currency); } } });
+        // Modificación para balancesByLocation: almacenar ARS y USD por separado
+        const balancesByLocation = incomeLocations.reduce((acc, loc) => { 
+            acc[loc.name] = { totalARS: 0, totalUSD: 0 }; 
+            return acc; 
+        }, {});
+
+        incomes.forEach(income => { 
+            const location = income.location || 'Sin Ubicación'; 
+            if (balancesByLocation[location]) {
+                if (income.currency === 'ARS') {
+                    balancesByLocation[location].totalARS += income.amount;
+                } else if (income.currency === 'USD') {
+                    balancesByLocation[location].totalUSD += income.amount;
+                }
+            }
+        });
+        expenses.forEach(expense => { 
+            if(expense.isPaid && expense.source) { 
+                const source = expense.source; 
+                if(balancesByLocation[source]) {
+                    if (expense.currency === 'ARS') {
+                        balancesByLocation[source].totalARS -= expense.amount;
+                    } else if (expense.currency === 'USD') {
+                        balancesByLocation[source].totalUSD -= expense.amount;
+                    }
+                } 
+            } 
+        });
         
         const totalIncomeARS = incomes.filter(i => i.currency === 'ARS').reduce((sum, i) => sum + i.amount, 0);
         const totalIncomeUSD = incomes.filter(i => i.currency === 'USD').reduce((sum, i) => sum + i.amount, 0);

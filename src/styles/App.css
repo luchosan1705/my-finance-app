@@ -1,5 +1,3 @@
-/* src/styles/App.css */
-
 /* Base Styles */
 body {
     margin: 0;
@@ -274,10 +272,6 @@ code {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.dashboard-list-grid {
     margin-bottom: 1.5rem;
 }
 
